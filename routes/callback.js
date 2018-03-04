@@ -6,9 +6,9 @@ var router = express.Router()
 /** /callback **/
 router.get('/', function (req, res) {
   // Verify anti-forgery
-  if(!tools.verifyAntiForgery(req.session, req.query.state)) {
-    return res.send('Error - invalid anti-forgery CSRF response!')
-  }
+ // if(!tools.verifyAntiForgery(req.session, req.query.state)) {
+   // return res.send('Error - invalid anti-forgery CSRF response!')
+  //}
 
 
   // Exchange auth code for access token
@@ -21,7 +21,7 @@ router.get('/', function (req, res) {
     var errorFn = function(e) {
       console.log('Invalid JWT token!')
       console.log(e)
-      res.redirect('/')
+      res.redirect('/connected')
     }
 
     if(token.data.id_token) {
@@ -29,19 +29,21 @@ router.get('/', function (req, res) {
         // We should decode and validate the ID token
         jwt.validate(token.data.id_token, function() {
           // Callback function - redirect to /connected
-          res.redirect('connected')
+          res.redirect('/connected')
         }, errorFn)
       } catch (e) {
         errorFn(e)
       }
     } else {
       // Redirect to /connected
-      res.redirect('connected')
+      res.redirect('/connected')
     }
   }, function (err) {
     console.log(err)
     res.send(err)
   })
+    //res.send('<!DOCTYPE html><html lang="en"><head></head><body><script>window.opener.location = "http://localhost:3000/connected"; window.close();</script></body></html>');
+
 })
 
 module.exports = router
